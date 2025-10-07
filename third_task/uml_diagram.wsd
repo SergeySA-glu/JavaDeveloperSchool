@@ -1,0 +1,127 @@
+@startuml Transport Classes Diagram
+!theme plain
+
+' Перечисления
+enum FuelType {
+  PETROL
+  DIESEL
+  ELECTRIC
+  KEROSENE
+  NONE
+}
+
+enum TransportType {
+  CAR
+  AIRPLANE
+  SHIP
+  BICYCLE
+}
+
+enum EngineState {
+  STOPPED
+  STARTED
+}
+
+' Класс Двигателя
+class Engine {
+  - power: double
+  - fuelType: FuelType
+  - state: EngineState
+  + start(): String
+  + stop(): String
+  + toString(): String
+}
+
+' Интерфейс объектов с двигателем
+interface HasEngine {
+    + setEngine(engine: Engine): void
+}
+
+' Абстрактный базовый класс транспорта
+abstract class Transport {
+  # name: String
+  # maxSpeed: double
+  # transportType: TransportType
+  # engine: Engine
+  + {abstract} move(): String
+  + {abstract} stop(): String
+  + getInfo(): String
+  + setEngine(engine: Engine): void
+}
+
+' Абстрактные классы транспорта
+abstract class GroundTransport {
+  # wheelCount: int
+}
+
+abstract class AirTransport {
+  # maxAltitude: double
+}
+
+abstract class WaterTransport {
+  # displacement: double
+}
+
+' Классы транспорта
+class Car {
+  - brand: String
+  - passengerCapacity: int
+}
+
+class Bicycle {
+}
+
+class Airplane {
+  - wingspan: double
+  - passengerCapacity: int
+}
+
+class Ship {
+  - passengerCapacity: int
+  - crewCount: int
+}
+
+' Реализация
+HasEngine <|.. Transport
+
+' Наследование
+Transport <|-- GroundTransport
+Transport <|-- AirTransport
+Transport <|-- WaterTransport
+
+GroundTransport <|-- Car
+GroundTransport <|-- Bicycle
+AirTransport <|-- Airplane
+WaterTransport <|-- Ship
+
+' Ассоциации
+Transport --> Engine
+Transport --> TransportType
+Engine --> FuelType
+Engine --> EngineState
+
+note top of Transport
+  <b>Абстрактный запечатанный класс</b>
+  Разрешенные наследники:
+  GroundTransport, AirTransport, WaterTransport
+end note
+
+note top of GroundTransport
+  <b>Запечатанный класс</b>
+  Разрешенные наследники:
+  Car, Bicycle
+end note
+
+note top of AirTransport
+  <b>Запечатанный класс</b>
+  Разрешенные наследники:
+  Airplane
+end note
+
+note top of WaterTransport
+  <b>Запечатанный класс</b>
+  Разрешенные наследники:
+  Ship
+end note
+
+@enduml
