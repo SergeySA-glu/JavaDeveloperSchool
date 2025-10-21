@@ -3,61 +3,100 @@ package fourth_task;
 import java.util.ArrayList;
 import java.util.List;
 
-class ObservableStringBuilder {
-    private final StringBuilder sb = new StringBuilder();
-    private final List<Observer> observers = new ArrayList<>();
+public class ObservableStringBuilder {
+    private StringBuilder stringBuilder;
+    private List<Observer> observers;
 
-    public void addObserver(Observer observer) {
-        observers.add(observer);
+    public ObservableStringBuilder() {
+        stringBuilder = new StringBuilder();
+        observers = new ArrayList<>();
     }
 
-    public void removeObserver(Observer observer) {
-        observers.remove(observer);
-    }
-
-    private void notifyObservers() {
-        String currentValue = sb.toString();
-        for (Observer observer : observers) {
-            observer.onChange(currentValue);
+    public void attach(Observer observer) {
+        try {
+            if (observer == null) {
+                throw new IllegalArgumentException("Observer не может быть null");
+            }
+            if (!observers.contains(observer)) {
+                observers.add(observer);
+            }
+        } catch (Exception e) {
+            System.err.println("Ошибка при добавлении observer: " + e.getMessage());
         }
     }
 
-    // --- Методы, делегирующие вызовы стандартному StringBuilder ---
-    public ObservableStringBuilder append(String str) {
-        sb.append(str);
-        notifyObservers();
-        return this;
+    public void detach(Observer observer) {
+        try {
+            if (observer == null) {
+                throw new IllegalArgumentException("Observer не может быть null");
+            }
+            observers.remove(observer);
+        } catch (Exception e) {
+            System.err.println("Ошибка при удалении observer: " + e.getMessage());
+        }
     }
 
-    public ObservableStringBuilder append(char c) {
-        sb.append(c);
-        notifyObservers();
-        return this;
+    private void notifyObservers() {
+        String message = stringBuilder.toString();
+        for (Observer observer : observers) {
+            try {
+                observer.update(message);
+            } catch (Exception e) {
+                System.err.println("Ошибка при оповещении observer: " + e.getMessage());
+            }
+        }
     }
 
-    public ObservableStringBuilder insert(int offset, String str) {
-        sb.insert(offset, str);
-        notifyObservers();
-        return this;
+    public void append(String str) {
+        try {
+            if (str == null) {
+                throw new IllegalArgumentException("Строка не может быть null");
+            }
+            stringBuilder.append(str);
+            notifyObservers();
+        } catch (Exception e) {
+            System.err.println("Ошибка при добавлении строки: " + e.getMessage());
+        }
     }
 
-    public ObservableStringBuilder delete(int start, int end) {
-        sb.delete(start, end);
-        notifyObservers();
-        return this;
+    public void delete(int start, int end) {
+        try {
+            if (start < 0 || end > stringBuilder.length() || start > end) {
+                throw new IllegalArgumentException("Неверные индексы для удаления");
+            }
+            stringBuilder.delete(start, end);
+            notifyObservers();
+        } catch (Exception e) {
+            System.err.println("Ошибка при удалении: " + e.getMessage());
+        }
     }
 
-    public ObservableStringBuilder reverse() {
-        sb.reverse();
-        notifyObservers();
-        return this;
+    public void insert(int offset, String str) {
+        try {
+            if (str == null) {
+                throw new IllegalArgumentException("Строка не может быть null");
+            }
+            if (offset < 0 || offset > stringBuilder.length()) {
+                throw new IllegalArgumentException("Неверный индекс для вставки");
+            }
+            stringBuilder.insert(offset, str);
+            notifyObservers();
+        } catch (Exception e) {
+            System.err.println("Ошибка при вставке: " + e.getMessage());
+        }
     }
 
-    public int length() {
-        return sb.length();
+    public void reverse() {
+        try {
+            stringBuilder.reverse();
+            notifyObservers();
+        } catch (Exception e) {
+            System.err.println("Ошибка при развороте строки: " + e.getMessage());
+        }
     }
 
+    @Override
     public String toString() {
-        return sb.toString();
+        return stringBuilder.toString();
     }
 }
