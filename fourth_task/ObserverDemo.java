@@ -2,26 +2,42 @@ package fourth_task;
 
 public class ObserverDemo {
     public static void main(String[] args) {
-        ObservableStringBuilder osb = new ObservableStringBuilder();
-
-        // Добавляем двух наблюдателей
-        Observer observer1 = new MyObserver();
-        osb.addObserver(observer1);
-
-        Observer observer2 = new Observer() {
-            @Override
-            public void onChange(String newValue) {
-                System.out.println("Anonymous Observer: состояние изменилось на -> " + newValue);
+        try {
+            ObservableStringBuilder observable = new ObservableStringBuilder();
+            
+            try {
+                Observer observer1 = new MyObserver("Наблюдатель 1");
+                Observer observer2 = new MyObserver("Наблюдатель 2");
+                
+                observable.attach(observer1);
+                observable.attach(observer2);
+                
+                System.out.println("\nДобавляем текст:");
+                observable.append("Привет, ");
+                
+                System.out.println("\nДобавляем еще текст:");
+                observable.append("мир!");
+                
+                System.out.println("\nВставляем текст:");
+                observable.insert(7, "чудесный ");
+                
+                System.out.println("\nУдаляем часть текста:");
+                observable.delete(0, 7);
+                
+                System.out.println("\nРазворачиваем строку:");
+                observable.reverse();
+                
+                observable.detach(observer2);
+                
+                System.out.println("\nПосле удаления второго наблюдателя:");
+                observable.append(" :)");
+                
+            } catch (IllegalArgumentException e) {
+                System.err.println("Ошибка при создании наблюдателя: " + e.getMessage());
             }
-        };
-        osb.addObserver(observer2);
-
-        // Работа с объектом
-        osb.append("Hello");
-        osb.append(", ");
-        osb.append("World!");
-        osb.delete(5, 7);
-        osb.insert(5, " wonderful ");
-        osb.reverse();
+            
+        } catch (Exception e) {
+            System.err.println("Непредвиденная ошибка: " + e.getMessage());
+        }
     }
 }

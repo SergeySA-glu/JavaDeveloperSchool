@@ -1,5 +1,5 @@
 package fourth_task;
 
-interface Observer {
-    void onChange(String newValue);
+public interface Observer {
+    void update(String message) throws IllegalArgumentException;
 }
